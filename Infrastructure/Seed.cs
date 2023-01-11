@@ -52,9 +52,41 @@ namespace Infrastructure
                 },
             };
 
+            var replies = new List<Post>
+            {
+                new Post
+                {
+                    PostCategory = categories[0],
+                    CreatedDate = DateTime.UtcNow,
+                    Author = users[2],
+                    InReplyTo = posts[0],
+                    Title = "Reply post 1",
+                    Text = "This is a reply post.",
+                },
+                new Post
+                {
+                    PostCategory = categories[0],
+                    CreatedDate = DateTime.UtcNow,
+                    Author = users[0],
+                    InReplyTo = posts[1],
+                    Title = "Reply post 2",
+                    Text = "This is a reply post.",
+                },
+                new Post
+                {
+                    PostCategory = categories[0],
+                    CreatedDate = DateTime.UtcNow,
+                    Author = users[1],
+                    InReplyTo = posts[2],
+                    Title = "Reply post 3",
+                    Text = "This is a reply post.",
+                },
+            };
+
             await context.Users.AddRangeAsync(users);
             await context.Categories.AddRangeAsync(categories);
             await context.Posts.AddRangeAsync(posts);
+            await context.Posts.AddRangeAsync(replies);
             await context.SaveChangesAsync();
         }
     }
