@@ -8,12 +8,18 @@ namespace Infrastructure
         {
             if (context.Posts.Any() || context.Users.Any() || context.Categories.Any()) return;
 
-            var users = new List<User>
+            List<string> userNames = new List<string>
             {
-                new User {UserName = "Eric", CreatedDate = DateTime.UtcNow},
-                new User {UserName = "Max", CreatedDate = DateTime.UtcNow},
-                new User {UserName = "Monica", CreatedDate = DateTime.UtcNow},
+                "Eric", "Max", "Monica", "Rick", "Joe"
             };
+            List<User> users = new();
+            List<Post> posts = new();
+            List<Post> replies = new();
+
+            foreach (string user in userNames)
+            {
+                users.Add(new User {UserName=user, CreatedDate=DateTime.UtcNow});
+            }
 
             var categories = new List<Category>
             {
@@ -24,64 +30,32 @@ namespace Infrastructure
                 },
             };
 
-            var posts = new List<Post>
+            var rand = new Random();
+            for (int i = 1; i <= 15; i++)
             {
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[0],
-                    Title = "Test post 1",
-                    Text = "This is a test post.",
-                },
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[1],
-                    Title = "Test post 2",
-                    Text = "This is a test post.",
-                },
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[2],
-                    Title = "Test post 3",
-                    Text = "This is a test post.",
-                },
-            };
+                int index = rand.Next(userNames.Count);
+                posts.Add(
+                    new Post{
+                        PostCategory = categories[0],
+                        CreatedDate = DateTime.UtcNow,
+                        Author = users[index],
+                        Title = $"Test post {i}",
+                        Text = "This is a test post.",
+                    }
+                );
 
-            var replies = new List<Post>
-            {
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[2],
-                    InReplyTo = posts[0],
-                    Title = "Reply post 1",
-                    Text = "This is a reply post.",
-                },
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[0],
-                    InReplyTo = posts[1],
-                    Title = "Reply post 2",
-                    Text = "This is a reply post.",
-                },
-                new Post
-                {
-                    PostCategory = categories[0],
-                    CreatedDate = DateTime.UtcNow,
-                    Author = users[1],
-                    InReplyTo = posts[2],
-                    Title = "Reply post 3",
-                    Text = "This is a reply post.",
-                },
-            };
+                replies.Add(
+                    new Post
+                    {
+                        PostCategory = categories[0],
+                        CreatedDate = DateTime.UtcNow,
+                        Author = users[index],
+                        InReplyTo = posts[i - 1],
+                        Title = $"Reply post {i}",
+                        Text = "This is a reply post.",
+                    }
+                );
+            }
 
             await context.Users.AddRangeAsync(users);
             await context.Categories.AddRangeAsync(categories);
