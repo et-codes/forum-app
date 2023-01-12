@@ -5,24 +5,31 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
-  [Route("api/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class PostsController : ControllerBase
+    public class ForumController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public PostsController(DataContext context)
+        public ForumController(DataContext context)
         {
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet("posts")]
         [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
-        public async Task<IEnumerable<Post>> Get()
+        public async Task<IEnumerable<Post>> GetPosts()
         {
             return await _context.Posts
                 .OrderBy(post => post.CreatedDate)
                 .ToListAsync();
+        }
+
+        [HttpGet("categories")]
+        [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
+        public async Task<IEnumerable<Category>> GetCategories()
+        {
+            return await _context.Categories.ToListAsync();
         }
     }
 }
