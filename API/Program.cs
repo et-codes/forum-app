@@ -6,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(opt => {
@@ -26,6 +25,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Apply database migrations.
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;
 
