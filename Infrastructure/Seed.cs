@@ -6,7 +6,11 @@ namespace Infrastructure
     {
         public static async Task SeedData(DataContext context)
         {
-            if (context.Posts.Any() || context.Users.Any() || context.Categories.Any()) return;
+            if (
+                context.Posts.Any() 
+                || context.Users.Any() 
+                || context.Categories.Any()
+            ) return;
 
             List<string> userNames = new List<string>
             {
@@ -18,12 +22,18 @@ namespace Infrastructure
 
             foreach (string user in userNames)
             {
-                users.Add(new User {UserName=user, CreatedDate=DateTime.UtcNow});
+                users.Add(
+                    new User
+                    {
+                        UserName=user, CreatedDate=DateTime.UtcNow
+                    }
+                );
             }
 
             var categories = new List<Category>
             {
-                new Category {
+                new Category
+                {
                     CreatedDate = DateTime.UtcNow,
                     Name = "General",
                     Description = "General Stuff"
