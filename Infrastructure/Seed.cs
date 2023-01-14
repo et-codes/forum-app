@@ -1,34 +1,33 @@
 using Core.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure
 {
   public class Seed
     {
-        public static async Task SeedData(DataContext context)
+        public static async Task SeedData(DataContext context, UserManager<User> userManager)
         {
+            var users = new List<User>();
+            var posts = new List<Post>();
+            var replies = new List<Post>();
+
+            if (!userManager.Users.Any())
+            {
+                users.Add(new User{DisplayName = "Eric", UserName = "eric", Email = "eric@email.com"});
+                users.Add(new User{DisplayName = "Monica", UserName = "monica", Email = "monica@email.com"});
+                users.Add(new User{DisplayName = "Max", UserName = "max", Email = "max@email.com"});
+
+                foreach (var user in users)
+                {
+                    // UserManager saves on creation, don't need SaveChangesAsync
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+            }
+
             if (
                 context.Posts.Any() 
-                || context.Users.Any() 
                 || context.Categories.Any()
             ) return;
-
-            List<string> userNames = new List<string>
-            {
-                "Eric", "Max", "Monica", "Rick", "Joe"
-            };
-            List<User> users = new();
-            List<Post> posts = new();
-            List<Post> replies = new();
-
-            foreach (string user in userNames)
-            {
-                users.Add(
-                    new User
-                    {
-                        UserName=user, CreatedDate=DateTime.UtcNow
-                    }
-                );
-            }
 
             var categories = new List<Category>
             {
@@ -43,7 +42,7 @@ namespace Infrastructure
             var rand = new Random();
             for (int i = 1; i <= 15; i++)
             {
-                int index = rand.Next(userNames.Count);
+                int index = rand.Next(users.Count);
                 posts.Add(
                     new Post{
                         PostCategory = categories[0],
@@ -67,7 +66,6 @@ namespace Infrastructure
                 );
             }
 
-            await context.Users.AddRangeAsync(users);
             await context.Categories.AddRangeAsync(categories);
             await context.Posts.AddRangeAsync(posts);
             await context.Posts.AddRangeAsync(replies);

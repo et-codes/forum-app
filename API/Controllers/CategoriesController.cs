@@ -7,25 +7,16 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ForumController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
         private readonly DataContext _context;
 
-        public ForumController(DataContext context)
+        public CategoriesController(DataContext context)
         {
             _context = context;
         }
 
-        [HttpGet("posts")]
-        [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
-        public async Task<IEnumerable<Post>> GetPosts()
-        {
-            return await _context.Posts
-                .OrderBy(post => post.CreatedDate)
-                .ToListAsync();
-        }
-
-        [HttpGet("categories")]
+        [HttpGet]
         [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
         public async Task<IEnumerable<Category>> GetCategories()
         {
