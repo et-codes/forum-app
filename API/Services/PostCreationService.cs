@@ -7,8 +7,8 @@ namespace API.Services
 {
     public interface IPostCreationService
     {
-        Task<PostEntity> Create(PostDto post, UserEntity author, PostEntity inReplyTo);
-        Task<PostEntity> Create(PostDto post, UserEntity author);
+        Task<PostEntity> Create(HttpContext httpContext, PostDto post, PostEntity inReplyTo);
+        Task<PostEntity> Create(HttpContext httpContext, PostDto post);
     }
 
     public class PostCreationService : IPostCreationService
@@ -22,9 +22,11 @@ namespace API.Services
             _userManager = userManager;
         }
 
-        public async Task<PostEntity> Create(PostDto post, UserEntity author, PostEntity inReplyTo)
+        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post, PostEntity inReplyTo)
         {
             CategoryEntity category;
+
+            var author = await _userManager.GetUserAsync(httpContext.User);
 
             if (inReplyTo == null)
             {
@@ -52,9 +54,9 @@ namespace API.Services
             return newPost;
         }
 
-        public async Task<PostEntity> Create(PostDto post, UserEntity author)
+        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post)
         {
-            return await Create(post, author, null);
+            return await Create(httpContext, post, null);
         }
     }
 }

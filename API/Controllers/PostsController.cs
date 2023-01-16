@@ -68,9 +68,8 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreatePost(PostDto post)
         {
-            var author = await _userManager.GetUserAsync(HttpContext.User);
+            var newPost = await _postCreationService.Create(HttpContext, post);
 
-            var newPost = _postCreationService.Create(post, author);
             return CreatedAtAction(nameof(GetPost), 
                 new {id = newPost.Id}, newPost);
         }
@@ -88,7 +87,7 @@ namespace API.Controllers
 
             var author = await _userManager.GetUserAsync(HttpContext.User);
 
-            var newPost = _postCreationService.Create(post, author, inReplyTo);
+            var newPost = _postCreationService.Create(HttpContext, post, inReplyTo);
             return CreatedAtAction(nameof(GetPost), 
                 new {id = newPost.Id}, newPost);
         }
