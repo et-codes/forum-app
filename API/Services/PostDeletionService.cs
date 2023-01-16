@@ -21,14 +21,22 @@ namespace API.Services
 
         public async Task<IActionResult> Delete(Guid id)
         {
+            StatusCodeResult result;
+
             var postToDelete = await _context.Posts.FindAsync(id);
-            if (postToDelete != null)
+
+            if (postToDelete == null)
+            {
+                result = new StatusCodeResult(404);
+            }
+            else
             {
                 _context.Posts.Remove(postToDelete);
                 await _context.SaveChangesAsync();
-                return new StatusCodeResult(204);
+                result = new StatusCodeResult(204);
             }
-            return new StatusCodeResult(404);
+
+            return result;
         }
     }
 }
