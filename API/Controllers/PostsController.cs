@@ -93,8 +93,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var postsToDelete = await _postQueryService.GetPost(id);
-            return await _postDeletionService.Delete(postsToDelete);
+            return await _postDeletionService.Delete(HttpContext, _postQueryService, id);
         }
     }
 }

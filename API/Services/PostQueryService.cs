@@ -23,6 +23,7 @@ namespace API.Services
 
         public async Task<IEnumerable<PostEntity>> GetAllPosts()
         {
+            // Returns all original posts
             return await _context.Posts
                 .Where(p => p.InReplyTo == null)
                 .Include("PostCategory")
@@ -33,6 +34,7 @@ namespace API.Services
 
         public async Task<IEnumerable<PostEntity>> GetPost(Guid id)
         {
+            // Returns post and its replies
             return await _context.Posts
                 .Where(p => p.Id == id || p.InReplyTo.Id == id)
                 .Include("PostCategory")
