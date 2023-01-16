@@ -1,21 +1,21 @@
-using Core.Models;
+using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure
 {
-  public class Seed
+    public class Seed
     {
-        public static async Task SeedData(DataContext context, UserManager<User> userManager)
+        public static async Task SeedData(DataContext context, UserManager<UserEntity> userManager)
         {
-            var posts = new List<Post>();
-            var replies = new List<Post>();
+            var posts = new List<PostEntity>();
+            var replies = new List<PostEntity>();
 
             if (!userManager.Users.Any())
             {
-                var users = new List<User>();                
-                users.Add(new User{DisplayName = "Eric", UserName = "eric", Email = "eric@email.com"});
-                users.Add(new User{DisplayName = "Monica", UserName = "monica", Email = "monica@email.com"});
-                users.Add(new User{DisplayName = "Max", UserName = "max", Email = "max@email.com"});
+                var users = new List<UserEntity>();                
+                users.Add(new UserEntity{DisplayName = "Eric", UserName = "eric", Email = "eric@email.com"});
+                users.Add(new UserEntity{DisplayName = "Monica", UserName = "monica", Email = "monica@email.com"});
+                users.Add(new UserEntity{DisplayName = "Max", UserName = "max", Email = "max@email.com"});
 
                 foreach (var user in users)
                 {
@@ -26,8 +26,8 @@ namespace Infrastructure
 
             if (!context.Categories.Any())
             {
-                var categories = new List<Category>();
-                categories.Add(new Category
+                var categories = new List<CategoryEntity>();
+                categories.Add(new CategoryEntity
                     {
                         CreatedDate = DateTime.UtcNow,
                         Name = "General",
@@ -48,7 +48,7 @@ namespace Infrastructure
                 {
                     int index = rand.Next(users.Count - 1);
                     posts.Add(
-                        new Post{
+                        new PostEntity{
                             PostCategory = categories[0],
                             CreatedDate = DateTime.UtcNow,
                             Author = users[index],
@@ -58,7 +58,7 @@ namespace Infrastructure
                     );
 
                     replies.Add(
-                        new Post
+                        new PostEntity
                         {
                             PostCategory = categories[0],
                             CreatedDate = DateTime.UtcNow,

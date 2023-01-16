@@ -1,4 +1,4 @@
-using Core.Models;
+using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,8 +17,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Post), StatusCodes.Status200OK)]
-        public async Task<IEnumerable<Category>> GetCategories()
+        [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
+        public async Task<IEnumerable<CategoryEntity>> GetCategories()
         {
             return await _context.Categories.ToListAsync();
         }

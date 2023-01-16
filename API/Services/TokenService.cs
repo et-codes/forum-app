@@ -1,7 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Core.Models;
+using Core.Entities;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Services
@@ -14,7 +14,7 @@ namespace API.Services
             _config = config;
         }
 
-        public string CreateToken(User user)
+        public string CreateToken(UserEntity user)
         {
             var claims = new List<Claim>
             {

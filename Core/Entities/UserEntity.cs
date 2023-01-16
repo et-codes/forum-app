@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Core.Models
+namespace Core.Entities
 {
-  public class User : IdentityUser
+    public class UserEntity : IdentityUser
     {
         public string DisplayName { get; set; }
     }

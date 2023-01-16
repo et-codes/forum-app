@@ -1,6 +1,6 @@
-namespace Core.Models
+namespace Core.Entities
 {
-  public class Category : BaseModel
+    public class CategoryEntity : BaseEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }

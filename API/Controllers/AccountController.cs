@@ -1,6 +1,6 @@
 using API.DTOs;
 using API.Services;
-using Core.Models;
+using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,10 +10,10 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<User> _userManager;
+        private readonly UserManager<UserEntity> _userManager;
         private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<User> userManager, TokenService tokenService)
+        public AccountController(UserManager<UserEntity> userManager, TokenService tokenService)
         {
             _tokenService = tokenService;
             _userManager = userManager;

@@ -1,6 +1,6 @@
 using System.Text;
 using API.Services;
-using Core.Models;
+using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -12,7 +12,7 @@ namespace API.Extensions
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, 
             IConfiguration config)
         {
-            services.AddIdentityCore<User>(opt =>
+            services.AddIdentityCore<UserEntity>(opt =>
             {
                 opt.Password.RequireNonAlphanumeric = false;
             })

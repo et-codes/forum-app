@@ -1,6 +1,6 @@
-namespace Core.Models
+namespace Core.Entities
 {
-  public class BaseModel
+    public class BaseEntity
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }

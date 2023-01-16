@@ -1,6 +1,6 @@
 using API.Extensions;
 using API.Services;
-using Core.Models;
+using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +18,7 @@ builder.Services.AddDbContext<DataContext>(opt => {
 });
 
 builder.Services.AddScoped<IPostCreationService, PostCreationService>();
+builder.Services.AddScoped<IPostDeletionService, PostDeletionService>();
 
 var app = builder.Build();
 
@@ -40,7 +41,7 @@ var services = scope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    var userManager = services.GetRequiredService<UserManager<User>>();
+    var userManager = services.GetRequiredService<UserManager<UserEntity>>();
     await context.Database.MigrateAsync();
     await Seed.SeedData(context, userManager);
 }
