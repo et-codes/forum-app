@@ -23,6 +23,7 @@ namespace API.Services
         public async Task<IEnumerable<PostEntity>> GetAllPosts()
         {
             return await _context.Posts
+                .Where(p => p.InReplyTo == null)
                 .Include("PostCategory")
                 .Include("Author")
                 .OrderBy(post => post.CreatedDate)

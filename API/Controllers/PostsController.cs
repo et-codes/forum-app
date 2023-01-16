@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// api/posts        GET all posts
+// api/posts        GET all posts without replies
 //                  POST new post [Authorize]
-// api/posts/id     GET single post
+// api/posts/id     GET single post AND replies
 //                  POST reply to post id [Authorize]
 //                  PUT edit post [Authorize]
 //                  DELETE delete post [Authorize]
