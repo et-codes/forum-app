@@ -1,5 +1,5 @@
-
 using API.DTOs;
+using API.Services;
 using Core.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +7,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-// Add [Authorize] identifier above methods that need a token.
+// api/posts        GET all posts
+//                  POST new post [Authorize]
+// api/posts/id     GET single post
+//                  POST reply to post id [Authorize]
+//                  PUT edit post [Authorize]
+//                  DELETE delete post [Authorize]
 
 namespace API.Controllers
 {
@@ -18,11 +23,17 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly IPostCreationService _postCreationService;
 
-        public PostsController(DataContext context, UserManager<User> userManager)
+        public PostsController(
+            DataContext context, 
+            UserManager<User> userManager,
+            IPostCreationService postCreationService
+        )
         {
             _context = context;
             _userManager = userManager;
+            _postCreationService = postCreationService;
         }
 
         [HttpGet]
@@ -54,30 +65,22 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreatePost(PostDto post)
         {
-            Post inReplyTo = null;
-            bool isReply = Guid.TryParse(post.InReplyToId, out Guid inReplyToId);
-            if (isReply)
-            {
-                inReplyTo = await _context.Posts.FindAsync(inReplyToId);
-            }
-
-            var categoryId = Guid.Parse(post.CategoryId);
-            var category = await _context.Categories.FindAsync(categoryId);
             var author = await _userManager.GetUserAsync(HttpContext.User);
 
-            var newPost = new Post
-            {
-                CreatedDate = DateTime.UtcNow,
-                PostCategory = category,
-                Author = author,
-                InReplyTo = inReplyTo,
-                Title = post.Title,
-                Text = post.Text,
-            };
+            var newPost = _postCreationService.Create(post, author);
+            return CreatedAtAction(nameof(GetPost), 
+                new {id = newPost.Id}, newPost);
+        }
 
-            await _context.Posts.AddAsync(newPost);
-            await _context.SaveChangesAsync();
+        [Authorize]
+        [HttpPost("{inReplyToId}")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> ReplyToPost(Guid inReplyToId, PostDto post)
+        {
+            var author = await _userManager.GetUserAsync(HttpContext.User);
 
+            var newPost = _postCreationService.Create(post, author, inReplyToId);
             return CreatedAtAction(nameof(GetPost), 
                 new {id = newPost.Id}, newPost);
         }
@@ -86,6 +89,6 @@ namespace API.Controllers
         // [HttpPut("{id}")]
 
         // [Authorize]
-        // [HttpDelete]
+        // [HttpDelete("{id}")]
     }
 }

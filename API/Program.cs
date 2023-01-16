@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Services;
 using Core.Models;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
@@ -15,6 +16,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(opt => {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<IPostCreationService, PostCreationService>();
 
 var app = builder.Build();
 
