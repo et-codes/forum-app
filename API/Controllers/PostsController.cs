@@ -5,14 +5,13 @@ using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-// api/posts        GET all posts without replies
+// api/posts        GET all posts that are not replies
 //                  POST new post [Authorize]
-// api/posts/id     GET single post AND replies
+// api/posts/id     GET single post and all its replies
 //                  POST reply to post id [Authorize]
 //                  PUT edit post [Authorize]
-//                  DELETE delete post [Authorize]
+//                  DELETE delete post and its replies [Authorize]
 
 namespace API.Controllers
 {
@@ -94,7 +93,8 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
-            return await _postDeletionService.Delete(id);
+            var postsToDelete = await _postQueryService.GetPost(id);
+            return await _postDeletionService.Delete(postsToDelete);
         }
     }
 }
