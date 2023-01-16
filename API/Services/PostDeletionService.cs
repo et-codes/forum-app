@@ -2,7 +2,6 @@
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
@@ -22,20 +21,15 @@ namespace API.Services
             _userManager = userManager;
         }
 
-        public DataContext Context { get; }
-
         public async Task<IActionResult> Delete(HttpContext httpContext, 
             IPostQueryService postQueryService, Guid id)
         {
             StatusCodeResult result;
 
-            var postToDelete = await _context.Posts
-                .Include("Author")
-                .FirstAsync(p => p.Id == id);
+            var postToDelete = await postQueryService.GetPost(id);
+            bool isAuthorized = await userIsPostAuthor(postToDelete, httpContext);
 
-            var deletingUser = await _userManager.GetUserAsync(httpContext.User);
-
-            if (deletingUser != postToDelete.Author)
+            if (!isAuthorized)
             {
                 result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
             }
@@ -45,7 +39,7 @@ namespace API.Services
             }
             else
             {
-                var postsToDelete = await postQueryService.GetPost(id);
+                var postsToDelete = await postQueryService.GetPostAndReplies(id);
 
                 _context.Posts.RemoveRange(postsToDelete);
                 await _context.SaveChangesAsync();
@@ -54,6 +48,12 @@ namespace API.Services
             }
 
             return result;
+        }
+
+        private async Task<bool> userIsPostAuthor(PostEntity post, HttpContext httpContext)
+        {
+            var deletingUser = await _userManager.GetUserAsync(httpContext.User);
+            return deletingUser == post.Author;
         }
     }
 }

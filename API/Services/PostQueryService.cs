@@ -9,7 +9,8 @@ namespace API.Services
     public interface IPostQueryService
     {
         Task<IEnumerable<PostEntity>> GetAllPosts();
-        Task<IEnumerable<PostEntity>> GetPost(Guid id);
+        Task<IEnumerable<PostEntity>> GetPostAndReplies(Guid id);
+        Task<PostEntity> GetPost(Guid id);
     }
 
     public class PostQueryService : IPostQueryService
@@ -32,7 +33,7 @@ namespace API.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<PostEntity>> GetPost(Guid id)
+        public async Task<IEnumerable<PostEntity>> GetPostAndReplies(Guid id)
         {
             // Returns post and its replies
             return await _context.Posts
@@ -42,5 +43,16 @@ namespace API.Services
                 .Include("InReplyTo")
                 .ToListAsync();
         }
+
+        public async Task<PostEntity> GetPost(Guid id)
+        {
+            return await _context.Posts
+                .Where(p => p.Id == id || p.InReplyTo.Id == id)
+                .Include("PostCategory")
+                .Include("Author")
+                .Include("InReplyTo")
+                .FirstAsync();
+        }
+
     }
 }

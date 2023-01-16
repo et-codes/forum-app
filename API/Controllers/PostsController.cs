@@ -53,7 +53,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPost(Guid id)
         {
-            var result = await _postQueryService.GetPost(id);
+            var result = await _postQueryService.GetPostAndReplies(id);
 
             return result == null ? NotFound() : Ok(result);
         }
@@ -90,6 +90,7 @@ namespace API.Controllers
         [Authorize]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
