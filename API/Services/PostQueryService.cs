@@ -2,13 +2,14 @@
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.Arm;
 
 namespace API.Services
 {
     public interface IPostQueryService
     {
         Task<IEnumerable<PostEntity>> GetAllPosts();
-        Task<PostEntity> GetPost(Guid id);
+        Task<IEnumerable<PostEntity>> GetPost(Guid id);
     }
 
     public class PostQueryService : IPostQueryService
@@ -30,13 +31,14 @@ namespace API.Services
                 .ToListAsync();
         }
 
-        public async Task<PostEntity> GetPost(Guid id)
+        public async Task<IEnumerable<PostEntity>> GetPost(Guid id)
         {
             return await _context.Posts
+                .Where(p => p.Id == id || p.InReplyTo.Id == id)
                 .Include("PostCategory")
                 .Include("Author")
                 .Include("InReplyTo")
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .ToListAsync();
         }
     }
 }

@@ -54,9 +54,9 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPost(Guid id)
         {
-            var post = await _postQueryService.GetPost(id);
+            var result = await _postQueryService.GetPost(id);
 
-            return post == null ? NotFound() : Ok(post);
+            return result == null ? NotFound() : Ok(result);
         }
 
         [Authorize]
