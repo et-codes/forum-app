@@ -17,6 +17,7 @@ builder.Services.AddDbContext<DataContext>(opt => {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<IPostQueryService, PostQueryService>();
 builder.Services.AddScoped<IPostCreationService, PostCreationService>();
 builder.Services.AddScoped<IPostDeletionService, PostDeletionService>();
 

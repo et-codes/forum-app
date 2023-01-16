@@ -23,31 +23,30 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly UserManager<UserEntity> _userManager;
+        private readonly IPostQueryService _postQueryService;
         private readonly IPostCreationService _postCreationService;
         private readonly IPostDeletionService _postDeletionService;
 
         public PostsController(
             DataContext context, 
             UserManager<UserEntity> userManager,
+            IPostQueryService postQueryService,
             IPostCreationService postCreationService,
             IPostDeletionService postDeletionService
         )
         {
             _context = context;
             _userManager = userManager;
+            _postQueryService = postQueryService;
             _postCreationService = postCreationService;
             _postDeletionService = postDeletionService;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
-        public async Task<IEnumerable<PostEntity>> GetPosts()
+        public async Task<IEnumerable<PostEntity>> GetAllPosts()
         {
-            return await _context.Posts
-                .Include("PostCategory")
-                .Include("Author")
-                .OrderBy(post => post.CreatedDate)
-                .ToListAsync();
+            return await _postQueryService.GetAllPosts();
         }
 
         [HttpGet("{id}")]
@@ -55,11 +54,8 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetPost(Guid id)
         {
-            var post = await _context.Posts
-                .Include("PostCategory")
-                .Include("Author")
-                .Include("InReplyTo")
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var post = await _postQueryService.GetPost(id);
+
             return post == null ? NotFound() : Ok(post);
         }
 
