@@ -51,7 +51,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetPost(Guid id)
+        public async Task<IActionResult> GetPostAndReplies(Guid id)
         {
             var result = await _postQueryService.GetPostAndReplies(id);
 
@@ -65,7 +65,7 @@ namespace API.Controllers
         {
             var newPost = await _postCreationService.Create(HttpContext, post);
 
-            return CreatedAtAction(nameof(GetPost), new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetPostAndReplies), new {id = newPost.Id}, newPost);
         }
 
         [Authorize]
@@ -81,7 +81,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(GetPost), new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetPostAndReplies), new {id = newPost.Id}, newPost);
         }
 
         // [Authorize]
