@@ -70,8 +70,7 @@ namespace API.Controllers
         {
             var newPost = await _postCreationService.Create(HttpContext, post);
 
-            return CreatedAtAction(nameof(GetPost), 
-                new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetPost), new {id = newPost.Id}, newPost);
         }
 
         [Authorize]
@@ -80,16 +79,14 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ReplyToPost(Guid inReplyToId, PostDto post)
         {
-            var inReplyTo = await _context.Posts
-                .Include("PostCategory")
-                .FirstOrDefaultAsync(p => p.Id == inReplyToId);
-            if (inReplyTo == null) return NotFound();
+            var newPost = await _postCreationService.Create(HttpContext, post, inReplyToId);
 
-            var author = await _userManager.GetUserAsync(HttpContext.User);
+            if (newPost == null)
+            {
+                return NotFound();
+            }
 
-            var newPost = _postCreationService.Create(HttpContext, post, inReplyTo);
-            return CreatedAtAction(nameof(GetPost), 
-                new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetPost), new {id = newPost.Id}, newPost);
         }
 
         // [Authorize]

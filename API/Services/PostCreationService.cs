@@ -2,12 +2,13 @@ using API.DTOs;
 using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
     public interface IPostCreationService
     {
-        Task<PostEntity> Create(HttpContext httpContext, PostDto post, PostEntity inReplyTo);
+        Task<PostEntity> Create(HttpContext httpContext, PostDto post, Guid? inReplyToId);
         Task<PostEntity> Create(HttpContext httpContext, PostDto post);
     }
 
@@ -22,19 +23,26 @@ namespace API.Services
             _userManager = userManager;
         }
 
-        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post, PostEntity inReplyTo)
+        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post, Guid? inReplyToId)
         {
             CategoryEntity category;
+            PostEntity inReplyTo = null;
 
             var author = await _userManager.GetUserAsync(httpContext.User);
 
-            if (inReplyTo == null)
+            if (inReplyToId == null)
             {
                 var categoryId = Guid.Parse(post.CategoryId);
                 category = await _context.Categories.FindAsync(categoryId);
             }
             else
             {
+                inReplyTo = await _context.Posts
+                    .Include("PostCategory")
+                    .FirstOrDefaultAsync(p => p.Id == inReplyToId);
+
+                if (inReplyTo == null) return null;
+
                 category = inReplyTo.PostCategory;
             }
 
