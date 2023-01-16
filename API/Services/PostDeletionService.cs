@@ -1,11 +1,11 @@
-﻿using Core.Entities;
-using Infrastructure;
+﻿using Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Services
 {
     public interface IPostDeletionService
     {
-        Task<PostEntity> Delete(Guid id);
+        Task<IActionResult> Delete(Guid id);
     }
 
     public class PostDeletionService : IPostDeletionService
@@ -19,16 +19,16 @@ namespace API.Services
 
         public DataContext Context { get; }
 
-        public async Task<PostEntity> Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
             var postToDelete = await _context.Posts.FindAsync(id);
             if (postToDelete != null)
             {
                 _context.Posts.Remove(postToDelete);
                 await _context.SaveChangesAsync();
+                return new StatusCodeResult(204);
             }
-
-            return postToDelete;
+            return new StatusCodeResult(404);
         }
     }
 }
