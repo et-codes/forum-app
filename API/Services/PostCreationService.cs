@@ -1,6 +1,7 @@
 using API.DTOs;
 using Core.Entities;
 using Infrastructure;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Services
 {
@@ -13,10 +14,12 @@ namespace API.Services
     public class PostCreationService : IPostCreationService
     {
         private readonly DataContext _context;
+        private readonly UserManager<UserEntity> _userManager;
 
-        public PostCreationService(DataContext context)
+        public PostCreationService(DataContext context, UserManager<UserEntity> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<PostEntity> Create(PostDto post, UserEntity author, PostEntity inReplyTo)

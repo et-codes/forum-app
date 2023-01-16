@@ -27,13 +27,13 @@ namespace API.Services
 
             if (postToDelete == null)
             {
-                result = new StatusCodeResult(404);
+                result = new StatusCodeResult(StatusCodes.Status204NoContent);
             }
             else
             {
                 _context.Posts.Remove(postToDelete);
                 await _context.SaveChangesAsync();
-                result = new StatusCodeResult(204);
+                result = new StatusCodeResult(StatusCodes.Status404NotFound);
             }
 
             return result;
