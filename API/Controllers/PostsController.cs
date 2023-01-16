@@ -56,15 +56,14 @@ namespace API.Controllers
         {
             Post inReplyTo = null;
             bool isReply = Guid.TryParse(post.InReplyToId, out Guid inReplyToId);
-
-            var categoryId = Guid.Parse(post.CategoryId);
-            var category = await _context.Categories.FindAsync(categoryId);
-            var author = await _userManager.GetUserAsync(HttpContext.User);
-
             if (isReply)
             {
                 inReplyTo = await _context.Posts.FindAsync(inReplyToId);
             }
+
+            var categoryId = Guid.Parse(post.CategoryId);
+            var category = await _context.Categories.FindAsync(categoryId);
+            var author = await _userManager.GetUserAsync(HttpContext.User);
 
             var newPost = new Post
             {
