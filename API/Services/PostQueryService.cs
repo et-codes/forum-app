@@ -1,8 +1,6 @@
 ﻿using Core.Entities;
 using Infrastructure;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.Intrinsics.Arm;
 
 namespace API.Services
 {
@@ -24,7 +22,7 @@ namespace API.Services
 
         public async Task<IEnumerable<PostEntity>> GetAllPosts()
         {
-            // Returns all original posts
+            // Returns all original posts for category view
             return await _context.Posts
                 .Where(p => p.InReplyTo == null)
                 .Include("PostCategory")
@@ -35,13 +33,17 @@ namespace API.Services
 
         public async Task<IEnumerable<PostEntity>> GetPostAndReplies(Guid id)
         {
-            // Returns post and its replies
-            return await _context.Posts
+            // Returns post and its replies for post view
+            var result = await _context.Posts
                 .Where(p => p.Id == id || p.InReplyTo.Id == id)
                 .Include("PostCategory")
                 .Include("Author")
                 .Include("InReplyTo")
                 .ToListAsync();
+
+            UpdateViewCount(id);
+
+            return result;
         }
 
         public async Task<PostEntity> GetPost(Guid id)
@@ -54,5 +56,12 @@ namespace API.Services
                 .FirstOrDefaultAsync();
         }
 
+        private async void UpdateViewCount(Guid id)
+        {
+            var post = await GetPost(id);
+            post.Views += 1;
+            _context.Entry(post).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
     }
 }
