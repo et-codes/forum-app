@@ -47,11 +47,11 @@ namespace API.Services
         public async Task<PostEntity> GetPost(Guid id)
         {
             return await _context.Posts
-                .Where(p => p.Id == id || p.InReplyTo.Id == id)
+                .Where(p => p.Id == id)
                 .Include("PostCategory")
                 .Include("Author")
                 .Include("InReplyTo")
-                .FirstAsync();
+                .FirstOrDefaultAsync();
         }
 
     }

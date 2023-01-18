@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddIdentityServices(builder.Configuration);
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<DataContext>(opt => {
@@ -19,6 +20,7 @@ builder.Services.AddDbContext<DataContext>(opt => {
 
 builder.Services.AddScoped<IPostQueryService, PostQueryService>();
 builder.Services.AddScoped<IPostCreationService, PostCreationService>();
+builder.Services.AddScoped<IPostUpdateService, PostUpdateService>();
 builder.Services.AddScoped<IPostDeletionService, PostDeletionService>();
 
 var app = builder.Build();

@@ -24,6 +24,7 @@ namespace API.Controllers
         private readonly UserManager<UserEntity> _userManager;
         private readonly IPostQueryService _postQueryService;
         private readonly IPostCreationService _postCreationService;
+        private readonly IPostUpdateService _postUpdateService;
         private readonly IPostDeletionService _postDeletionService;
 
         public PostsController(
@@ -31,6 +32,7 @@ namespace API.Controllers
             UserManager<UserEntity> userManager,
             IPostQueryService postQueryService,
             IPostCreationService postCreationService,
+            IPostUpdateService postUpdateService,
             IPostDeletionService postDeletionService
         )
         {
@@ -38,6 +40,7 @@ namespace API.Controllers
             _userManager = userManager;
             _postQueryService = postQueryService;
             _postCreationService = postCreationService;
+            _postUpdateService = postUpdateService;
             _postDeletionService = postDeletionService;
         }
 
@@ -84,8 +87,15 @@ namespace API.Controllers
             return CreatedAtAction(nameof(GetPostAndReplies), new {id = newPost.Id}, newPost);
         }
 
-        // [Authorize]
-        // [HttpPut("{id}")]
+        [Authorize]
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(Guid id, PostDto updatedPost)
+        {
+            return await _postUpdateService.Update(id, updatedPost);
+        }
 
         [Authorize]
         [HttpDelete("{id}")]
