@@ -66,7 +66,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreatePost(PostDto post)
         {
-            var newPost = await _postCreationService.Create(HttpContext, post);
+            var newPost = await _postCreationService.Create(post);
 
             return CreatedAtAction(nameof(GetPostAndReplies), new {id = newPost.Id}, newPost);
         }
@@ -77,7 +77,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> ReplyToPost(Guid inReplyToId, PostDto post)
         {
-            var newPost = await _postCreationService.Create(HttpContext, post, inReplyToId);
+            var newPost = await _postCreationService.Create(post, inReplyToId);
 
             if (newPost == null)
             {

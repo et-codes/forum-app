@@ -8,27 +8,30 @@ namespace API.Services
 {
     public interface IPostCreationService
     {
-        Task<PostEntity> Create(HttpContext httpContext, PostDto post, Guid? inReplyToId);
-        Task<PostEntity> Create(HttpContext httpContext, PostDto post);
+        Task<PostEntity> Create(PostDto post, Guid? inReplyToId);
+        Task<PostEntity> Create(PostDto post);
     }
 
     public class PostCreationService : IPostCreationService
     {
         private readonly DataContext _context;
         private readonly UserManager<UserEntity> _userManager;
+        private readonly IHttpContextAccessor _accessor;
 
-        public PostCreationService(DataContext context, UserManager<UserEntity> userManager)
+        public PostCreationService(DataContext context, UserManager<UserEntity> userManager,
+            IHttpContextAccessor accessor)
         {
             _context = context;
             _userManager = userManager;
+            _accessor = accessor;
         }
 
-        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post, Guid? inReplyToId)
+        public async Task<PostEntity> Create(PostDto post, Guid? inReplyToId)
         {
             CategoryEntity category;
             PostEntity inReplyTo = null;
 
-            var author = await _userManager.GetUserAsync(httpContext.User);
+            var author = await _userManager.GetUserAsync(_accessor.HttpContext.User);
 
             if (inReplyToId == null)
             {
@@ -62,9 +65,9 @@ namespace API.Services
             return newPost;
         }
 
-        public async Task<PostEntity> Create(HttpContext httpContext, PostDto post)
+        public async Task<PostEntity> Create(PostDto post)
         {
-            return await Create(httpContext, post, null);
+            return await Create(post, null);
         }
     }
 }
