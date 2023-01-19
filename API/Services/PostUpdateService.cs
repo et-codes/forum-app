@@ -9,7 +9,7 @@ namespace API.Services
 {
     public interface IPostUpdateService
     {
-        Task<IActionResult> Update(Guid id, PostDto postToUpdate);
+        Task<IActionResult> Update(Guid id, NewPostDto postToUpdate);
     }
 
     public class PostUpdateService : IPostUpdateService
@@ -26,7 +26,7 @@ namespace API.Services
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Update(Guid id, PostDto updatedPost) 
+        public async Task<IActionResult> Update(Guid id, NewPostDto updatedPost) 
         {
             var post = await _context.Posts
                 .Where(p => p.Id == id)

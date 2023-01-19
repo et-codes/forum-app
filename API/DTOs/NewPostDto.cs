@@ -1,6 +1,6 @@
 namespace API.DTOs
 {
-  public class PostDto
+  public class NewPostDto
     {
         public string CategoryId { get; set; }
         public string Title { get; set; }

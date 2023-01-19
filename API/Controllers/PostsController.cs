@@ -64,7 +64,7 @@ namespace API.Controllers
         [Authorize]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> CreatePost(PostDto post)
+        public async Task<IActionResult> CreatePost(NewPostDto post)
         {
             var newPost = await _postCreationService.Create(post);
 
@@ -75,7 +75,7 @@ namespace API.Controllers
         [HttpPost("{inReplyToId}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ReplyToPost(Guid inReplyToId, PostDto post)
+        public async Task<IActionResult> ReplyToPost(Guid inReplyToId, NewPostDto post)
         {
             var newPost = await _postCreationService.Create(post, inReplyToId);
 
@@ -92,7 +92,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Update(Guid id, PostDto updatedPost)
+        public async Task<IActionResult> Update(Guid id, NewPostDto updatedPost)
         {
             return await _postUpdateService.Update(id, updatedPost);
         }

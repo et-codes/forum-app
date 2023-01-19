@@ -8,8 +8,8 @@ namespace API.Services
 {
     public interface IPostCreationService
     {
-        Task<PostEntity> Create(PostDto post, Guid? inReplyToId);
-        Task<PostEntity> Create(PostDto post);
+        Task<PostEntity> Create(NewPostDto post, Guid? inReplyToId);
+        Task<PostEntity> Create(NewPostDto post);
     }
 
     public class PostCreationService : IPostCreationService
@@ -26,7 +26,7 @@ namespace API.Services
             _accessor = accessor;
         }
 
-        public async Task<PostEntity> Create(PostDto post, Guid? inReplyToId)
+        public async Task<PostEntity> Create(NewPostDto post, Guid? inReplyToId)
         {
             CategoryEntity category;
             PostEntity inReplyTo = null;
@@ -65,7 +65,7 @@ namespace API.Services
             return newPost;
         }
 
-        public async Task<PostEntity> Create(PostDto post)
+        public async Task<PostEntity> Create(NewPostDto post)
         {
             return await Create(post, null);
         }

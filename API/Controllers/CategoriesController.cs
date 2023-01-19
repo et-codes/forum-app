@@ -1,3 +1,5 @@
+using API.DTOs;
+using AutoMapper;
 using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
@@ -10,17 +12,23 @@ namespace API.Controllers
     public class CategoriesController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IMapper _mapper;
 
-        public CategoriesController(DataContext context)
+        public CategoriesController(DataContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         [HttpGet]
         [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
-        public async Task<IEnumerable<CategoryEntity>> GetCategories()
+        public async Task<IEnumerable<CategoryDto>> GetCategories()
         {
-            return await _context.Categories.ToListAsync();
+            var categories = await _context.Categories.ToListAsync();
+            
+            var result = _mapper.Map<List<CategoryDto>>(categories);
+
+            return result;
         }
     }
 }
