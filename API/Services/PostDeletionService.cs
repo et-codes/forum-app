@@ -2,58 +2,56 @@
 using Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Services
 {
     public interface IPostDeletionService
     {
-        Task<IActionResult> Delete(HttpContext httpContext, IPostQueryService postQueryService, Guid id);
+        Task<IActionResult> Delete(Guid id);
     }
 
     public class PostDeletionService : IPostDeletionService
     {
         private readonly DataContext _context;
+        private readonly IHttpContextAccessor _accessor;
         private readonly UserManager<UserEntity> _userManager;
 
-        public PostDeletionService(DataContext context, UserManager<UserEntity> userManager)
+        public PostDeletionService(DataContext context, UserManager<UserEntity> userManager,
+            IHttpContextAccessor accessor)
         {
             _context = context;
+            _accessor = accessor;
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> Delete(HttpContext httpContext, 
-            IPostQueryService postQueryService, Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            StatusCodeResult result;
+            var post = await _context.Posts
+                .Where(p => p.Id == id)
+                .Include("Author")
+                .FirstOrDefaultAsync();
 
-            var postToDelete = await postQueryService.GetPost(id);
-            bool isAuthorized = await userIsPostAuthor(postToDelete, httpContext);
-
-            if (!isAuthorized)
+            if (post == null)
             {
-                result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
-            }
-            else if (postToDelete == null)
-            {
-                result = new StatusCodeResult(StatusCodes.Status404NotFound);
-            }
-            else
-            {
-                var postsToDelete = await postQueryService.GetPostAndReplies(id);
-
-                _context.Posts.RemoveRange(postsToDelete);
-                await _context.SaveChangesAsync();
-
-                result = new StatusCodeResult(StatusCodes.Status204NoContent);
+                return new StatusCodeResult(StatusCodes.Status404NotFound);
             }
 
-            return result;
-        }
+            var deletingUser = await _userManager.GetUserAsync(_accessor.HttpContext.User);
 
-        private async Task<bool> userIsPostAuthor(PostEntity post, HttpContext httpContext)
-        {
-            var deletingUser = await _userManager.GetUserAsync(httpContext.User);
-            return deletingUser == post.Author;
+            if (deletingUser != post.Author)
+            {
+                return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            var postsToDelete = await _context.Posts
+                .Where(p => p.Id == id || p.InReplyTo.Id == id)
+                .ToListAsync();
+
+            _context.Posts.RemoveRange(postsToDelete);
+            await _context.SaveChangesAsync();
+
+            return new StatusCodeResult(StatusCodes.Status204NoContent);
         }
     }
 }
