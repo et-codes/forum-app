@@ -6,8 +6,8 @@ namespace API.Services
 {
     public interface IPostQueryService
     {
-        Task<IEnumerable<PostEntity>> GetAllPosts();
-        Task<IEnumerable<PostEntity>> GetPostAndReplies(Guid id);
+        Task<IEnumerable<PostEntity>> GetTopics();
+        Task<IEnumerable<PostEntity>> GetTopicAndReplies(Guid id);
         Task<PostEntity> GetPost(Guid id);
     }
 
@@ -20,9 +20,9 @@ namespace API.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<PostEntity>> GetAllPosts()
+        public async Task<IEnumerable<PostEntity>> GetTopics()
         {
-            // Returns all original posts for category view
+            // Returns all topic posts for category view
             return await _context.Posts
                 .Where(p => p.InReplyTo == null)
                 .Include("PostCategory")
@@ -31,7 +31,7 @@ namespace API.Services
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<PostEntity>> GetPostAndReplies(Guid id)
+        public async Task<IEnumerable<PostEntity>> GetTopicAndReplies(Guid id)
         {
             // Returns post and its replies for post view
             var result = await _context.Posts
