@@ -54,6 +54,7 @@ namespace Infrastructure
                             Author = users[index],
                             Title = $"Test post {i}",
                             Text = "This is a test post.",
+                            Replies = 1,
                         }
                     );
 

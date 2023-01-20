@@ -1,0 +1,3 @@
+Create register method in AccountController
+Create category methods in CategoriesController
+Handle replies count.

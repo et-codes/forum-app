@@ -8,6 +8,7 @@ namespace Core.Entities
         public string Title { get; set; }
         public string Text { get; set; }
         public DateTime? ModifiedDate { get; set; }
-        public int Views { get; set; } = 1;
+        public int Views { get; set; }
+        public int Replies { get; set; }
     }
 }
