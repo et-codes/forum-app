@@ -47,6 +47,9 @@ namespace API.Services
                 if (inReplyTo == null) return null;
 
                 category = inReplyTo.PostCategory;
+
+                inReplyTo.Replies += 1;
+                _context.Entry(inReplyTo).State = EntityState.Modified;
             }
 
             var newPost = new PostEntity

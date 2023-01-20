@@ -30,6 +30,7 @@ namespace API.Services
             var post = await _context.Posts
                 .Where(p => p.Id == id)
                 .Include("Author")
+                .Include("InReplyTo")
                 .FirstOrDefaultAsync();
 
             if (post == null)
@@ -42,6 +43,13 @@ namespace API.Services
             if (deletingUser != post.Author)
             {
                 return new StatusCodeResult(StatusCodes.Status401Unauthorized);
+            }
+
+            if (post.InReplyTo != null)
+            {
+                var topicPost = post.InReplyTo;
+                topicPost.Replies -= 1;
+                _context.Entry(topicPost).State = EntityState.Modified;
             }
 
             var postsToDelete = await _context.Posts
