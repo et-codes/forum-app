@@ -1,4 +1,2 @@
 Create register method in AccountController
 Create category methods in CategoriesController
-Handle replies count.
-Return DTO's from creation methods.

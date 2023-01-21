@@ -76,8 +76,9 @@ namespace API.Controllers
         public async Task<IActionResult> CreatePost(NewPostDto post)
         {
             var newPost = await _postCreationService.Create(post);
+            var newPostDto = _mapper.Map<PostDto>(newPost);
 
-            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPostDto);
         }
 
         [Authorize]
@@ -87,13 +88,14 @@ namespace API.Controllers
         public async Task<IActionResult> ReplyToPost(Guid inReplyToId, NewPostDto post)
         {
             var newPost = await _postCreationService.Create(post, inReplyToId);
+            var newPostDto = _mapper.Map<PostDto>(newPost);
 
             if (newPost == null)
             {
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPost);
+            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPostDto);
         }
 
         [Authorize]
