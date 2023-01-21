@@ -45,12 +45,7 @@ namespace API.Services
                 return new StatusCodeResult(StatusCodes.Status401Unauthorized);
             }
 
-            if (post.InReplyTo != null)
-            {
-                var topicPost = post.InReplyTo;
-                topicPost.Replies -= 1;
-                _context.Entry(topicPost).State = EntityState.Modified;
-            }
+            await UpdateRepliesCount(post);
 
             var postsToDelete = await _context.Posts
                 .Where(p => p.Id == id || p.InReplyTo.Id == id)
@@ -60,6 +55,26 @@ namespace API.Services
             await _context.SaveChangesAsync();
 
             return new StatusCodeResult(StatusCodes.Status204NoContent);
+        }
+
+        private async Task<bool> UpdateRepliesCount(PostEntity post)
+        {
+            bool updateWasRequired;
+
+            if (post.InReplyTo == null) 
+            {
+                updateWasRequired = false;
+            }
+            else
+            {
+                updateWasRequired = true;
+                var topicPost = post.InReplyTo;
+                topicPost.Replies -= 1;
+                _context.Entry(topicPost).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+            }
+                        
+            return updateWasRequired;
         }
     }
 }
