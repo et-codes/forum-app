@@ -1,10 +1,7 @@
 using API.DTOs;
 using API.Services;
 using AutoMapper;
-using Core.Entities;
-using Infrastructure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 // api/posts        GET all topics (no replies)
@@ -21,8 +18,6 @@ namespace API.Controllers
 
     public class PostsController : ControllerBase
     {
-        private readonly DataContext _context;
-        private readonly UserManager<UserEntity> _userManager;
         private readonly IPostQueryService _postQueryService;
         private readonly IPostCreationService _postCreationService;
         private readonly IPostUpdateService _postUpdateService;
@@ -30,16 +25,12 @@ namespace API.Controllers
         private readonly IMapper _mapper;
 
         public PostsController(
-            DataContext context,
-            UserManager<UserEntity> userManager,
             IPostQueryService postQueryService,
             IPostCreationService postCreationService,
             IPostUpdateService postUpdateService,
             IPostDeletionService postDeletionService,
             IMapper mapper)
         {
-            _context = context;
-            _userManager = userManager;
             _postQueryService = postQueryService;
             _postCreationService = postCreationService;
             _postUpdateService = postUpdateService;
