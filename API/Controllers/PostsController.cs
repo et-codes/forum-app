@@ -48,7 +48,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PostDto), StatusCodes.Status200OK)]
         public async Task<IEnumerable<PostDto>> GetTopics()
         {
             var topics = await _postQueryService.GetTopics();
@@ -59,7 +59,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PostDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetTopicAndReplies(Guid id)
         {
