@@ -78,14 +78,14 @@ namespace API.Controllers
             var newPost = await _postCreationService.Create(post);
             var newPostDto = _mapper.Map<PostDto>(newPost);
 
-            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPostDto);
+            return StatusCode(StatusCodes.Status201Created, newPostDto);
         }
 
         [Authorize]
         [HttpPost("{inReplyToId}")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> ReplyToPost(Guid inReplyToId, NewPostDto post)
+        public async Task<IActionResult> CreateReply(Guid inReplyToId, NewPostDto post)
         {
             var newPost = await _postCreationService.Create(post, inReplyToId);
             var newPostDto = _mapper.Map<PostDto>(newPost);
@@ -95,7 +95,7 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return CreatedAtAction(nameof(GetTopicAndReplies), new {id = newPost.Id}, newPostDto);
+            return StatusCode(StatusCodes.Status201Created, newPostDto);
         }
 
         [Authorize]
