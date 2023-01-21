@@ -1,9 +1,15 @@
 using API.DTOs;
 using API.Services;
 using Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+
+// api/account          GET current user [Authorize]
+// api/account/login    POST login user
+// api/account/register POST register new user
 
 namespace API.Controllers
 {
@@ -34,12 +40,7 @@ namespace API.Controllers
 
             if (result)
             {
-                return new UserDto
-                {
-                    DisplayName = user.DisplayName,
-                    Token = _tokenService.CreateToken(user),
-                    Username = user.UserName
-                };
+                return CreateUserDto(user);
             }
 
             return Unauthorized();
@@ -71,15 +72,30 @@ namespace API.Controllers
 
             if (result.Succeeded)
             {
-                return new UserDto()
-                {
-                    DisplayName = user.DisplayName,
-                    Token = _tokenService.CreateToken(user),
-                    Username = user.UserName
-                };
+                return CreateUserDto(user);
             }
 
             return BadRequest(result.Errors);
+        }
+
+        [Authorize]
+        [HttpGet]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        {
+            var user = await _userManager.FindByEmailAsync(User.FindFirstValue(ClaimTypes.Email));
+
+            return CreateUserDto(user);
+        }
+
+        private UserDto CreateUserDto(UserEntity user)
+        {
+            return new UserDto()
+            {
+                DisplayName = user.DisplayName,
+                Token = _tokenService.CreateToken(user),
+                Username = user.UserName
+            };
         }
     }
 }
