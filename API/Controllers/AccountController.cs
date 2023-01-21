@@ -3,6 +3,7 @@ using API.Services;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
@@ -21,6 +22,8 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
@@ -40,6 +43,43 @@ namespace API.Controllers
             }
 
             return Unauthorized();
+        }
+
+        [HttpPost("register")]
+        [ProducesResponseType(typeof(UserDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        {
+            if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
+            {
+                return BadRequest($"Username '{registerDto.Username}' is already taken.");
+            }
+
+            if (await _userManager.Users.AnyAsync(x => x.Email == registerDto.Email))
+            {
+                return BadRequest($"Email address '{registerDto.Email}' is already taken.");
+            }
+
+            var user = new UserEntity
+            {
+                DisplayName = registerDto.DisplayName,
+                Email = registerDto.Email,
+                UserName = registerDto.Username
+            };
+
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (result.Succeeded)
+            {
+                return new UserDto()
+                {
+                    DisplayName = user.DisplayName,
+                    Token = _tokenService.CreateToken(user),
+                    Username = user.UserName
+                };
+            }
+
+            return BadRequest(result.Errors);
         }
     }
 }
