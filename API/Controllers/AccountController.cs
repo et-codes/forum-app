@@ -1,6 +1,5 @@
 using API.DTOs;
 using API.Services;
-using AutoMapper;
 using Core.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,14 +12,12 @@ namespace API.Controllers
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly TokenService _tokenService;
-        private readonly IMapper _mapper;
 
         public AccountController(UserManager<UserEntity> userManager, 
-            TokenService tokenService, IMapper mapper)
+            TokenService tokenService)
         {
             _tokenService = tokenService;
             _userManager = userManager;
-            _mapper = mapper;
         }
 
         [HttpPost("login")]
@@ -34,7 +31,12 @@ namespace API.Controllers
 
             if (result)
             {
-                return _mapper.Map<UserDto>(result);
+                return new UserDto
+                {
+                    DisplayName = user.DisplayName,
+                    Token = _tokenService.CreateToken(user),
+                    Username = user.UserName
+                };
             }
 
             return Unauthorized();

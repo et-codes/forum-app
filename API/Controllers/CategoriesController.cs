@@ -1,6 +1,5 @@
 using API.DTOs;
 using AutoMapper;
-using Core.Entities;
 using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(PostEntity), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CategoryDto), StatusCodes.Status200OK)]
         public async Task<IEnumerable<CategoryDto>> GetCategories()
         {
             var categories = await _context.Categories.ToListAsync();
