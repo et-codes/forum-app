@@ -7,9 +7,6 @@ namespace Infrastructure
     {
         public static async Task SeedData(DataContext context, UserManager<UserEntity> userManager)
         {
-            var posts = new List<PostEntity>();
-            var replies = new List<PostEntity>();
-
             if (!userManager.Users.Any())
             {
                 var users = new List<UserEntity>
@@ -21,7 +18,6 @@ namespace Infrastructure
 
                 foreach (var user in users)
                 {
-                    // UserManager saves on creation, don't need SaveChangesAsync
                     await userManager.CreateAsync(user, "Pa$$w0rd");
                 }
             }
@@ -46,7 +42,11 @@ namespace Infrastructure
             {
                 var users = userManager.Users.ToList();
                 var categories = context.Categories.ToList();
+
                 var rand = new Random();
+                var posts = new List<PostEntity>();
+                var replies = new List<PostEntity>();
+
                 for (int i = 1; i <= 15; i++)
                 {
                     int index = rand.Next(users.Count - 1);
