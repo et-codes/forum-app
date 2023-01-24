@@ -12,10 +12,12 @@ namespace Infrastructure
 
             if (!userManager.Users.Any())
             {
-                var users = new List<UserEntity>();                
-                users.Add(new UserEntity{DisplayName = "Eric", UserName = "eric", Email = "eric@email.com"});
-                users.Add(new UserEntity{DisplayName = "Monica", UserName = "monica", Email = "monica@email.com"});
-                users.Add(new UserEntity{DisplayName = "Max", UserName = "max", Email = "max@email.com"});
+                var users = new List<UserEntity>
+                {
+                    new UserEntity { DisplayName = "Eric", UserName = "eric", Email = "eric@email.com" },
+                    new UserEntity { DisplayName = "Monica", UserName = "monica", Email = "monica@email.com" },
+                    new UserEntity { DisplayName = "Max", UserName = "max", Email = "max@email.com" }
+                };
 
                 foreach (var user in users)
                 {
@@ -26,14 +28,15 @@ namespace Infrastructure
 
             if (!context.Categories.Any())
             {
-                var categories = new List<CategoryEntity>();
-                categories.Add(new CategoryEntity
+                var categories = new List<CategoryEntity>
+                {
+                    new CategoryEntity
                     {
                         CreatedDate = DateTime.UtcNow,
                         Name = "General",
                         Description = "General Stuff"
                     }
-                );
+                };
 
                 await context.Categories.AddRangeAsync(categories);
                 await context.SaveChangesAsync();
