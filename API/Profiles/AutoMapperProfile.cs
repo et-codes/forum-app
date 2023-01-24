@@ -9,6 +9,7 @@ namespace API.Profiles
         public AutoMapperProfile()
         {
             CreateMap<CategoryEntity, CategoryDto>();
+            CreateMap<CategoryDto, CategoryEntity>();
             CreateMap<UserEntity, AuthorDto>();
             CreateMap<PostEntity, PostDto>();
         }
