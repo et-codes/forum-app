@@ -1,16 +1,24 @@
 import { useState, useEffect } from "react";
 import { Container } from "react-bootstrap";
-import Category from "./interfaces/category";
 import axios from "axios";
+import Categories from "./components/Categories";
+import Posts from "./components/Posts";
+import CategoriesProps from "./interfaces/CategoriesProps";
+import Category from "./interfaces/Category";
+import Post from "./interfaces/Post";
+import PostsProps from "./interfaces/PostsProps";
+
+axios.defaults.baseURL = "http://localhost:5000/api";
 
 function App() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryIndex, setCategoryIndex] = useState(0);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/categories")
+      .get("/categories")
       .then((resp) => {
-        console.log(resp.data);
         setCategories(resp.data);
       })
       .catch((error) => {
@@ -18,20 +26,33 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    axios
+      .get("/posts")
+      .then((resp) => {
+        setPosts(resp.data);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }, []);
+
+  const categoriesProps: CategoriesProps = {
+    categories: categories,
+  };
+
+  const postsProps: PostsProps = {
+    posts: posts,
+    category: categories[categoryIndex],
+  };
+
   return (
     <Container>
       <h1>Forum App</h1>
       <h2>Categories</h2>
-      <>
-        {categories.forEach((category) => {
-          return (
-            <p key={category.id}>
-              `${category.name} ${category.description}`
-            </p>
-          );
-        })}
-      </>
-      <h2>Topics</h2>
+      <Categories {...categoriesProps} />
+      <h2>Posts</h2>
+      <Posts {...postsProps} />
     </Container>
   );
 }
