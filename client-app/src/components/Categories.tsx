@@ -1,16 +1,27 @@
 import CategoriesProps from "../interfaces/CategoriesProps";
+import { Table } from "react-bootstrap";
 
 function Categories(props: CategoriesProps) {
   return (
-    <>
-      {props.categories.map((category) => {
-        return (
-          <p key={category.id}>
-            {category.name}: {category.description}
-          </p>
-        );
-      })}
-    </>
+    <Table>
+      <thead>
+        <tr>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {props.categories.map((category) => (
+          <tr>
+            <td>
+              <p key={category.id}>
+                <strong>{category.name}</strong>
+              </p>
+              <p>{category.description}</p>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 }
 
